@@ -1,35 +1,73 @@
-using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public BoardMover[] players;   // Assign all player pieces in Inspector
-    public int currentPlayer = 0;
+    public BoardMover[] players;
+    public int currentPlayerIndex = 0;
 
-    public DiceUI diceUI;
-    public TMP_Text turnText;
+    public TurnUI_TMP turnUI;
+    public DiceUI_TMP diceUI;
+    public MinionsUI_TMP minionsUI;
+    public CameraFollow cameraFollow;
 
-    private void Start()
+    public BoardMover CurrentPlayerMover => players[currentPlayerIndex];
+    public PlayerData CurrentPlayerData => players[currentPlayerIndex].GetComponent<PlayerData>();
+
+    void Start()
     {
-        diceUI.SetGameManager(this);
-        HighlightCurrentPlayer();
+        SetCurrentPlayerFlags();
+        cameraFollow.target = CurrentPlayerMover.transform;
+        turnUI.UpdateTurn(currentPlayerIndex);
+        minionsUI.UpdateMinions(CurrentPlayerData.minions);
     }
 
-    public void PlayerRolled(int roll)
+
+    public void MoveCurrentPlayer(int spaces)
     {
-        players[currentPlayer].MoveSpaces(roll);
+        diceUI.ShowRoll(spaces);
+
+        foreach (BoardMover mover in players)
+            mover.onMoveComplete = null;
+
+        // Set camera BEFORE movement starts
+        cameraFollow.target = CurrentPlayerMover.transform;
+
+        CurrentPlayerMover.onMoveComplete = NextTurn;
+        CurrentPlayerMover.MoveSpaces(spaces);
     }
+
+
+    void SetCurrentPlayerFlags()
+    {
+        for (int i = 0; i < players.Length; i++)
+            players[i].isCurrentPlayer = (i == currentPlayerIndex);
+    }
+
+
 
     public void NextTurn()
     {
-        currentPlayer = (currentPlayer + 1) % players.Length;
-        HighlightCurrentPlayer();
-        diceUI.EnableDice();
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
+        SetCurrentPlayerFlags();
+
+        turnUI.UpdateTurn(currentPlayerIndex);
+        minionsUI.UpdateMinions(CurrentPlayerData.minions);
     }
 
-    private void HighlightCurrentPlayer()
+
+
+    // Example: give Minions
+    public void GiveMinionsToCurrentPlayer(int amount)
     {
-        turnText.text = "Player " + (currentPlayer + 1) + "'s Turn";
+        CurrentPlayerData.AddMinions(amount);
+        minionsUI.UpdateMinions(CurrentPlayerData.minions);
     }
 
+    // Example: charge Minions
+    public bool ChargeCurrentPlayer(int amount)
+    {
+        bool success = CurrentPlayerData.SpendMinions(amount);
+        minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        return success;
+    }
 }

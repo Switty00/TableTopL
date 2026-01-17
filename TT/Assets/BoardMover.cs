@@ -1,86 +1,77 @@
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class BoardMover : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float tileSize = 2f;
+    public float moveSpeed = 6f;
+    public List<Transform> boardSpaces;
+    public int currentIndex = 0;
 
-    private Vector3 targetPosition;
+    private int stepsRemaining = 0;
     private bool isMoving = false;
-    private int moveSteps = 0;
+    private Transform targetSpace;
 
-    public GameManager gameManager;
-
-    // Board corners
-    private Vector3 p1 = new Vector3(10f, 1.3f, -10f);
-    private Vector3 p2 = new Vector3(-10f, 1.3f, -10f);
-    private Vector3 p3 = new Vector3(-10f, 1.3f, 10f);
-    private Vector3 p4 = new Vector3(10f, 1.3f, 10f);
+    [HideInInspector] public bool isCurrentPlayer = false;
+    public System.Action onMoveComplete;
 
     void Update()
     {
-        HandleCornerRotation();
-
         if (isMoving)
-        {
-            MoveTowardsTarget();
-        }
+            MoveToNextSpace();
     }
-
-    // Call this from DiceUI
 
     public void MoveSpaces(int spaces)
     {
-        if (isMoving) return;
+        if (!isCurrentPlayer)
+        {
+            Debug.LogWarning(name + " tried to move but is not current player.");
+            return;
+        }
 
-        moveSteps = spaces;
+        if (isMoving || boardSpaces.Count == 0) return;
+
+        Debug.Log(name + " is starting to move " + spaces + " spaces.");
+        stepsRemaining = spaces;
         SetNextTarget();
     }
 
+
     private void SetNextTarget()
     {
-        targetPosition = transform.position + transform.up * tileSize;
+        currentIndex = (currentIndex + 1) % boardSpaces.Count;
+        targetSpace = boardSpaces[currentIndex];
         isMoving = true;
+
+        Vector3 dir = (targetSpace.position - transform.position).normalized;
+        if (dir.sqrMagnitude > 0.0001f)
+        {
+            Quaternion look = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Euler(-90f, look.eulerAngles.y, 0f);
+        }
     }
 
-    private void MoveTowardsTarget()
+    private void MoveToNextSpace()
     {
         transform.position = Vector3.MoveTowards(
             transform.position,
-            targetPosition,
+            targetSpace.position,
             moveSpeed * Time.deltaTime
         );
 
-        if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
+        if (Vector3.Distance(transform.position, targetSpace.position) < 0.01f)
         {
-            moveSteps--;
+            transform.position = targetSpace.position;
+            stepsRemaining--;
 
-            if (moveSteps > 0)
+            if (stepsRemaining > 0)
             {
                 SetNextTarget();
             }
             else
             {
                 isMoving = false;
-                gameManager.NextTurn();
+                onMoveComplete?.Invoke();
             }
         }
     }
-
-    private void HandleCornerRotation()
-    {
-        if (Vector3.Distance(transform.position, p1) < 0.1f)
-            transform.rotation = Quaternion.Euler(-90f, 0f, 90f);
-
-        if (Vector3.Distance(transform.position, p2) < 0.1f)
-            transform.rotation = Quaternion.Euler(-90f, 0f, 180f);
-
-        if (Vector3.Distance(transform.position, p3) < 0.1f)
-            transform.rotation = Quaternion.Euler(-90f, 0f, 270f);
-
-        if (Vector3.Distance(transform.position, p4) < 0.1f)
-            transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
-    }
 }
-
