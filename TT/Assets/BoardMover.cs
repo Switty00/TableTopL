@@ -13,6 +13,8 @@ public class BoardMover : MonoBehaviour
 
     [HideInInspector] public bool isCurrentPlayer = false;
     public System.Action onMoveComplete;
+    public System.Action onPassedCorner;
+    public int[] cornerIndexes = { 0, 10, 20, 30 };
 
     void Update()
     {
@@ -38,9 +40,19 @@ public class BoardMover : MonoBehaviour
 
     private void SetNextTarget()
     {
-        currentIndex = (currentIndex + 1) % boardSpaces.Count;
         targetSpace = boardSpaces[currentIndex];
         isMoving = true;
+        int previousIndex = currentIndex;
+        currentIndex = (currentIndex + 1) % boardSpaces.Count;
+        foreach (int corner in cornerIndexes)
+        {
+            if (previousIndex < corner && currentIndex >= corner)
+            {
+                onPassedCorner?.Invoke();
+            }
+        }
+
+
 
         Vector3 dir = (targetSpace.position - transform.position).normalized;
         if (dir.sqrMagnitude > 0.0001f)

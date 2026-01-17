@@ -160,7 +160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 23176894}
   m_Layer: 0
-  m_Name: Space_10_Undecided
+  m_Name: Space_10_Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1354,7 +1354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 522256363}
   m_Layer: 0
-  m_Name: Space_20_Undecided
+  m_Name: Space_20_Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2184,7 +2184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1324024596}
   m_Layer: 0
-  m_Name: Space_30_Undecided
+  m_Name: Space_30_Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3208,6 +3208,7 @@ MonoBehaviour:
   - {fileID: 1706597979}
   currentIndex: 0
   isCurrentPlayer: 0
+  cornerIndexes: 000000000a000000140000001e000000
 --- !u!114 &5451332007945188552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3282,6 +3283,7 @@ MonoBehaviour:
   - {fileID: 1706597979}
   currentIndex: 0
   isCurrentPlayer: 0
+  cornerIndexes: 000000000a000000140000001e000000
 --- !u!114 &5600143982333047732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3351,6 +3353,7 @@ MonoBehaviour:
   - {fileID: 1706597979}
   currentIndex: 0
   isCurrentPlayer: 0
+  cornerIndexes: 000000000a000000140000001e000000
 --- !u!114 &7731984704745628129
 MonoBehaviour:
   m_ObjectHideFlags: 0

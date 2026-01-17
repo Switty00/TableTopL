@@ -29,11 +29,16 @@ public class GameManager : MonoBehaviour
         foreach (BoardMover mover in players)
             mover.onMoveComplete = null;
 
-        // Set camera BEFORE movement starts
         cameraFollow.target = CurrentPlayerMover.transform;
 
         CurrentPlayerMover.onMoveComplete = NextTurn;
         CurrentPlayerMover.MoveSpaces(spaces);
+
+        CurrentPlayerMover.onPassedCorner = () =>
+        {
+            CurrentPlayerData.AddMinions(50);
+            minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        };
     }
 
 
