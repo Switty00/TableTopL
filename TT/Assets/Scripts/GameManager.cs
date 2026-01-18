@@ -15,12 +15,18 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        int playerCount = PlayerPrefs.GetInt("PlayerCount", 2);
+
+        for (int i = 0; i < players.Length; i++)
+            players[i].gameObject.SetActive(i < playerCount);
+
+        currentPlayerIndex = 0;
+
         SetCurrentPlayerFlags();
         cameraFollow.target = CurrentPlayerMover.transform;
         turnUI.UpdateTurn(currentPlayerIndex);
         minionsUI.UpdateMinions(CurrentPlayerData.minions);
     }
-
 
     public void MoveCurrentPlayer(int spaces)
     {
@@ -61,12 +67,14 @@ public class GameManager : MonoBehaviour
 
     public void NextTurn()
     {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
-        SetCurrentPlayerFlags();
+        int playerCount = PlayerPrefs.GetInt("PlayerCount", 2);
+        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
 
+        SetCurrentPlayerFlags();
         turnUI.UpdateTurn(currentPlayerIndex);
         minionsUI.UpdateMinions(CurrentPlayerData.minions);
     }
+
 
 
 
