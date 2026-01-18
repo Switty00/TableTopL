@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 
     public TurnUI_TMP turnUI;
     public DiceUI_TMP diceUI;
-    public MinionsUI_TMP minionsUI;
+    public MinionsUI minionsUI;
     public CameraFollow cameraFollow;
 
     public BoardMover CurrentPlayerMover => players[currentPlayerIndex];
@@ -19,13 +19,25 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < players.Length; i++)
             players[i].gameObject.SetActive(i < playerCount);
+        for (int i = 0; i < minionsUI.minionTexts.Length; i++)
+        {
+            minionsUI.minionTexts[i].gameObject.SetActive(i < playerCount);
+        }
+
 
         currentPlayerIndex = 0;
 
         SetCurrentPlayerFlags();
         cameraFollow.target = CurrentPlayerMover.transform;
         turnUI.UpdateTurn(currentPlayerIndex);
-        minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
+
+        for (int i = 0; i < players.Length; i++)
+        {
+            players[i].gameObject.SetActive(i < playerCount);
+            minionsUI.UpdateMinions(i, players[i].GetComponent<PlayerData>().minions);
+        }
+
     }
 
     public void MoveCurrentPlayer(int spaces)
@@ -43,14 +55,14 @@ public class GameManager : MonoBehaviour
         CurrentPlayerMover.onPassedCorner = () =>
         {
             CurrentPlayerData.AddMinions(50);
-            minionsUI.UpdateMinions(CurrentPlayerData.minions);
+            minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         };
         CurrentPlayerMover.onLandedBanditSquare = () =>
         {
             Debug.Log("Bandits stole 150 minions from player " + currentPlayerIndex);
 
             CurrentPlayerData.AddMinions(-150);
-            minionsUI.UpdateMinions(CurrentPlayerData.minions);
+            minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         };
 
 
@@ -72,7 +84,7 @@ public class GameManager : MonoBehaviour
 
         SetCurrentPlayerFlags();
         turnUI.UpdateTurn(currentPlayerIndex);
-        minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
     }
 
 
@@ -82,14 +94,14 @@ public class GameManager : MonoBehaviour
     public void GiveMinionsToCurrentPlayer(int amount)
     {
         CurrentPlayerData.AddMinions(amount);
-        minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
     }
 
     // Example: charge Minions
     public bool ChargeCurrentPlayer(int amount)
     {
         bool success = CurrentPlayerData.SpendMinions(amount);
-        minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         return success;
     }
 }
