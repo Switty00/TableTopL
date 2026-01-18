@@ -14,7 +14,9 @@ public class BoardMover : MonoBehaviour
     [HideInInspector] public bool isCurrentPlayer = false;
     public System.Action onMoveComplete;
     public System.Action onPassedCorner;
+    public System.Action onLandedBanditSquare;
     public int[] cornerIndexes = { 0, 10, 20, 30 };
+    public int[] banditSquares = { 15, 35 };
 
     void Update()
     {
@@ -26,7 +28,6 @@ public class BoardMover : MonoBehaviour
     {
         if (!isCurrentPlayer)
         {
-            Debug.LogWarning(name + " tried to move but is not current player.");
             return;
         }
 
@@ -50,10 +51,7 @@ public class BoardMover : MonoBehaviour
             {
                 onPassedCorner?.Invoke();
             }
-        }
-
-
-
+        }       
         Vector3 dir = (targetSpace.position - transform.position).normalized;
         if (dir.sqrMagnitude > 0.0001f)
         {
@@ -82,8 +80,18 @@ public class BoardMover : MonoBehaviour
             else
             {
                 isMoving = false;
+                foreach (int bandit in banditSquares)
+                {
+                    if (currentIndex == bandit)
+                    {
+                        Debug.Log("Player landed on bandit square " + bandit);
+                        onLandedBanditSquare?.Invoke();
+                    }
+                }
+
                 onMoveComplete?.Invoke();
             }
+
         }
     }
 }

@@ -1695,7 +1695,7 @@ GameObject:
   m_Component:
   - component: {fileID: 987641001}
   m_Layer: 0
-  m_Name: Space_35_Undecided
+  m_Name: Space_35_Bandit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2277,7 +2277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1450585163}
   m_Layer: 0
-  m_Name: Space_15_Undecided
+  m_Name: Space_15_Bandit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2429,7 +2429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1567255036}
   m_Layer: 0
-  m_Name: Space_00_Howdy
+  m_Name: Space_00_Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3209,6 +3209,7 @@ MonoBehaviour:
   currentIndex: 0
   isCurrentPlayer: 0
   cornerIndexes: 000000000a000000140000001e000000
+  banditSquares: 0f00000023000000
 --- !u!114 &5451332007945188552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3284,6 +3285,7 @@ MonoBehaviour:
   currentIndex: 0
   isCurrentPlayer: 0
   cornerIndexes: 000000000a000000140000001e000000
+  banditSquares: 0f00000023000000
 --- !u!114 &5600143982333047732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3354,6 +3356,7 @@ MonoBehaviour:
   currentIndex: 0
   isCurrentPlayer: 0
   cornerIndexes: 000000000a000000140000001e000000
+  banditSquares: 0f00000023000000
 --- !u!114 &7731984704745628129
 MonoBehaviour:
   m_ObjectHideFlags: 0

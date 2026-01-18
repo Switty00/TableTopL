@@ -39,6 +39,15 @@ public class GameManager : MonoBehaviour
             CurrentPlayerData.AddMinions(50);
             minionsUI.UpdateMinions(CurrentPlayerData.minions);
         };
+        CurrentPlayerMover.onLandedBanditSquare = () =>
+        {
+            Debug.Log("Bandits stole 150 minions from player " + currentPlayerIndex);
+
+            CurrentPlayerData.AddMinions(-150);
+            minionsUI.UpdateMinions(CurrentPlayerData.minions);
+        };
+
+
     }
 
 

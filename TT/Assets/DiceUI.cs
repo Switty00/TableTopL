@@ -7,6 +7,6 @@ public class DiceUI_TMP : MonoBehaviour
 
     public void ShowRoll(int roll)
     {
-        diceText.text = $"🎲 Rolled: <b>{roll}</b>";
+        diceText.text = $"Rolled: <b>{roll}</b>";
     }
 }
