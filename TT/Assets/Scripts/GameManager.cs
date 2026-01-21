@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public TurnUI_TMP turnUI;
     public DiceUI_TMP diceUI;
     public MinionsUI minionsUI;
-    public CameraFollow cameraFollow;
+    public SideFollowCamera cameraFollow;
 
     public BoardMover CurrentPlayerMover => players[currentPlayerIndex];
     public PlayerData CurrentPlayerData => players[currentPlayerIndex].GetComponent<PlayerData>();
