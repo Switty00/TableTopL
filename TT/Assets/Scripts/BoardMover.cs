@@ -13,8 +13,10 @@ public class BoardMover : MonoBehaviour
     public System.Action onMoveComplete;
     public System.Action onPassedCorner;
     public System.Action onLandedBanditSquare;
+    public System.Action onLandedRiskSquare;
     public int[] cornerIndexes = {0, 10, 20, 30 };
     public int[] banditSquares = {15,35 };
+    public int[] riskSquares = { 5, 25 };
 
     void Update()
     {
@@ -78,8 +80,17 @@ public class BoardMover : MonoBehaviour
                 {
                     if (currentIndex == bandit)
                     {
-                        Debug.Log("Player landed on bandit square " + bandit);
+                        Debug.Log("Player landed on bandit square ");
                         onLandedBanditSquare?.Invoke();
+                    }
+                }
+                isMoving = false;
+                foreach (int risk in riskSquares)
+                {
+                    if (currentIndex == risk)
+                    {
+                        Debug.Log("Player Landed on a risk square");
+                        onLandedRiskSquare?.Invoke();
                     }
                 }
                 onMoveComplete?.Invoke();

@@ -1,18 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour
 {
-    public int minions = 500;
+    public int minions = 0;
+    public bool skipNextTurn = false;
+
+    public List<string> items = new List<string>();
+
+    public void AddItem(string item)
+    {
+        items.Add(item);
+        Debug.Log("Player received item: " + item);
+    }
 
     public void AddMinions(int amount)
     {
         minions += amount;
     }
+
     public bool SpendMinions(int amount)
     {
-        if (minions < amount)
-            return false;
-
+        if (minions < amount) return false;
         minions -= amount;
         return true;
     }
