@@ -9,7 +9,7 @@ public class BoardMover : MonoBehaviour
     private int stepsRemaining = 0;
     private bool isMoving = false;
     private Transform targetSpace;
-    [HideInInspector] public bool isCurrentPlayer = false;
+    public bool isCurrentPlayer = false;
     public System.Action onMoveComplete;
     public System.Action onPassedCorner;
     public System.Action onLandedBanditSquare;

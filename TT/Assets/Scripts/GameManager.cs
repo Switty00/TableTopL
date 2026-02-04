@@ -104,9 +104,9 @@ public class GameManager : MonoBehaviour
             case 1: reward = "Cowboy Block"; CurrentPlayerData.AddItem("Cowboy Block"); break;
             case 2: reward = "Gunpowder Power"; CurrentPlayerData.AddItem("Gunpowder Power"); break;
             case 3: reward = "Cowboy Boots"; CurrentPlayerData.AddItem("Cowboy Boots"); break;
-            case 4: reward = "Thief"; CurrentPlayerData.AddItem("Thief"); break;
+            case 4: reward = "Thief"; CurrentPlayerData.AddMinions(-200); break;
             case 5: reward = "Mega Minion"; CurrentPlayerData.AddMinions(200); break;
-            case 6: reward = "Skip a Go"; CurrentPlayerData.skipNextTurn = true; break;
+            case 6: reward = "Extra Turn"; CurrentPlayerData.extraTurn = true; break;
         }
 
         StartCoroutine(ShowRiskMessages(roll, reward));

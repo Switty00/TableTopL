@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerData : MonoBehaviour
 {
     public int minions = 0;
-    public bool skipNextTurn = false;
+    public bool extraTurn = false;
 
     public List<string> items = new List<string>();
 
@@ -24,5 +24,13 @@ public class PlayerData : MonoBehaviour
         if (minions < amount) return false;
         minions -= amount;
         return true;
+    }
+
+    private void ExtraTurn()
+    {
+        if (extraTurn == true)
+        {
+
+        }
     }
 }
