@@ -3656,7 +3656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minions: 500
-  skipNextTurn: 0
+  extraTurn: 0
   items: []
 --- !u!1 &5600143982333047730 stripped
 GameObject:
@@ -3735,7 +3735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minions: 500
-  skipNextTurn: 0
+  extraTurn: 0
   items: []
 --- !u!114 &7731984704745628128
 MonoBehaviour:
@@ -3809,7 +3809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minions: 500
-  skipNextTurn: 0
+  extraTurn: 0
   items: []
 --- !u!1001 &8001198475735231929
 PrefabInstance:
