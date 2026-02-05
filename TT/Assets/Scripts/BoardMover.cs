@@ -94,6 +94,7 @@ public class BoardMover : MonoBehaviour
                     }
                 }
                 onMoveComplete?.Invoke();
+                
             }
         }
     }

@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public SideFollowCamera cameraFollow;
     public BoardMover CurrentPlayerMover => players[currentPlayerIndex];
     public PlayerData CurrentPlayerData => players[currentPlayerIndex].GetComponent<PlayerData>();
+    public bool skipNextPlayer = false;
+
     void Start()
     {
         
@@ -37,23 +39,28 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    public void MoveCurrentPlayer(int spaces)
+public void MoveCurrentPlayer(int spaces)
+{
+    if (CurrentPlayerData.doubleNextRoll)
     {
-        diceUI.ShowRoll(spaces);
+        spaces *= 2;
+        CurrentPlayerData.doubleNextRoll = false;
+        Debug.Log("Gunpowder Power activated! Roll doubled to " + spaces);
+    }
+    diceUI.ShowRoll(spaces);
+    foreach (BoardMover mover in players)
+        mover.onMoveComplete = null;
 
-        foreach (BoardMover mover in players)
-            mover.onMoveComplete = null;
+    cameraFollow.target = CurrentPlayerMover.transform;
 
-        cameraFollow.target = CurrentPlayerMover.transform;
+    CurrentPlayerMover.onMoveComplete = NextTurn;
+    CurrentPlayerMover.MoveSpaces(spaces);
 
-        CurrentPlayerMover.onMoveComplete = NextTurn;
-        CurrentPlayerMover.MoveSpaces(spaces);
-
-        CurrentPlayerMover.onPassedCorner = () =>
-        {
-            CurrentPlayerData.AddMinions(50);
-            minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
-        };
+    CurrentPlayerMover.onPassedCorner = () =>
+    {
+        CurrentPlayerData.AddMinions(50);
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
+    };
         CurrentPlayerMover.onLandedBanditSquare = () =>
         {
             Debug.Log("Bandits stole 150 minions from player " + currentPlayerIndex);
@@ -61,21 +68,48 @@ public class GameManager : MonoBehaviour
             CurrentPlayerData.AddMinions(-150);
             minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         };
-        CurrentPlayerMover.onLandedRiskSquare = () =>
-        {
-            HandleRiskSquare();
-        };
-
-    }
+    CurrentPlayerMover.onLandedRiskSquare = () =>
+    {
+        HandleRiskSquare();
+    };
+}
     void SetCurrentPlayerFlags()
     {
         for (int i = 0; i < players.Length; i++)
             players[i].isCurrentPlayer = (i == currentPlayerIndex);
     }
+    private IEnumerator ApplyCowboyBoots()
+    {
+        BoardMover bootsPlayer = CurrentPlayerMover;
+        yield return new WaitForSeconds(3f);
+        Debug.Log("Cowboy Boots activated! Moving player forward 2 spaces.");
+        bootsPlayer.MoveSpaces(2);
+    }
+
     public void NextTurn()
     {
+
+        if (CurrentPlayerData.extraTurn)
+        {
+            Debug.Log("Player " + currentPlayerIndex + " gets an EXTRA TURN!");
+            CurrentPlayerData.extraTurn = false;
+
+            SetCurrentPlayerFlags();
+            turnUI.UpdateTurn(currentPlayerIndex);
+            minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
+            return;
+        }
         int playerCount = PlayerPrefs.GetInt("PlayerCount", 2);
-        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        int nextPlayer = (currentPlayerIndex + 1) % playerCount;
+        if (skipNextPlayer)
+        {
+            Debug.Log("Cowboy Block activated! Skipping player " + nextPlayer);
+            skipNextPlayer = false;
+
+            nextPlayer = (nextPlayer + 1) % playerCount;
+        }
+
+        currentPlayerIndex = nextPlayer;
 
         SetCurrentPlayerFlags();
         turnUI.UpdateTurn(currentPlayerIndex);
@@ -101,9 +135,18 @@ public class GameManager : MonoBehaviour
 
         switch (roll)
         {
-            case 1: reward = "Cowboy Block"; CurrentPlayerData.AddItem("Cowboy Block"); break;
-            case 2: reward = "Gunpowder Power"; CurrentPlayerData.AddItem("Gunpowder Power"); break;
-            case 3: reward = "Cowboy Boots"; CurrentPlayerData.AddItem("Cowboy Boots"); break;
+            case 1:
+                reward = "Cowboy Block";
+                skipNextPlayer = true;
+                break;
+        case 2:
+            reward = "Gunpowder Power";
+            CurrentPlayerData.doubleNextRoll = true;
+            break;
+        case 3:
+                reward = "Cowboy Boots";
+                StartCoroutine(ApplyCowboyBoots());
+                break;
             case 4: reward = "Thief"; CurrentPlayerData.AddMinions(-200); break;
             case 5: reward = "Mega Minion"; CurrentPlayerData.AddMinions(200); break;
             case 6: reward = "Extra Turn"; CurrentPlayerData.extraTurn = true; break;
@@ -120,5 +163,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         turnUI.HideMessage();
-        }   
+        }
+
 }

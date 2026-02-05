@@ -5,7 +5,7 @@ public class PlayerData : MonoBehaviour
 {
     public int minions = 0;
     public bool extraTurn = false;
-
+    public bool doubleNextRoll = false;
     public List<string> items = new List<string>();
 
     public void AddItem(string item)
@@ -24,13 +24,5 @@ public class PlayerData : MonoBehaviour
         if (minions < amount) return false;
         minions -= amount;
         return true;
-    }
-
-    private void ExtraTurn()
-    {
-        if (extraTurn == true)
-        {
-
-        }
     }
 }
