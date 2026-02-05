@@ -39,40 +39,49 @@ public class GameManager : MonoBehaviour
         }
 
     }
-public void MoveCurrentPlayer(int spaces)
-{
-    if (CurrentPlayerData.doubleNextRoll)
+    private IEnumerator ShowBanditMessage()
     {
-        spaces *= 2;
-        CurrentPlayerData.doubleNextRoll = false;
-        Debug.Log("Gunpowder Power activated! Roll doubled to " + spaces);
-    }
-    diceUI.ShowRoll(spaces);
-    foreach (BoardMover mover in players)
-        mover.onMoveComplete = null;
+        turnUI.BanditMessage("Bandits stole 150 Minions");
+        yield return new WaitForSeconds(3f);
+        turnUI.BanditHideMessage();
 
-    cameraFollow.target = CurrentPlayerMover.transform;
-
-    CurrentPlayerMover.onMoveComplete = NextTurn;
-    CurrentPlayerMover.MoveSpaces(spaces);
-
-    CurrentPlayerMover.onPassedCorner = () =>
-    {
-        CurrentPlayerData.AddMinions(50);
+        CurrentPlayerData.AddMinions(-150);
         minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
-    };
+    }
+    public void MoveCurrentPlayer(int spaces)
+    {
+        if (CurrentPlayerData.doubleNextRoll)
+        {
+            spaces *= 2;
+            CurrentPlayerData.doubleNextRoll = false;
+            Debug.Log("Gunpowder Power activated! Roll doubled to " + spaces);
+        }
+        diceUI.ShowRoll(spaces);
+        foreach (BoardMover mover in players)
+            mover.onMoveComplete = null;
+
+        cameraFollow.target = CurrentPlayerMover.transform;
+
+        CurrentPlayerMover.onMoveComplete = NextTurn;
+        CurrentPlayerMover.MoveSpaces(spaces);
+
+        CurrentPlayerMover.onPassedCorner = () =>
+        {
+            CurrentPlayerData.AddMinions(50);
+            minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
+        };
         CurrentPlayerMover.onLandedBanditSquare = () =>
         {
+            StartCoroutine(ShowBanditMessage());
             Debug.Log("Bandits stole 150 minions from player " + currentPlayerIndex);
-
             CurrentPlayerData.AddMinions(-150);
             minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         };
-    CurrentPlayerMover.onLandedRiskSquare = () =>
-    {
-        HandleRiskSquare();
-    };
-}
+        CurrentPlayerMover.onLandedRiskSquare = () =>
+        {
+            HandleRiskSquare();
+        };
+    }
     void SetCurrentPlayerFlags()
     {
         for (int i = 0; i < players.Length; i++)
@@ -139,11 +148,11 @@ public void MoveCurrentPlayer(int spaces)
                 reward = "Cowboy Block";
                 skipNextPlayer = true;
                 break;
-        case 2:
-            reward = "Gunpowder Power";
-            CurrentPlayerData.doubleNextRoll = true;
-            break;
-        case 3:
+            case 2:
+                reward = "Gunpowder Power";
+                CurrentPlayerData.doubleNextRoll = true;
+                break;
+            case 3:
                 reward = "Cowboy Boots";
                 StartCoroutine(ApplyCowboyBoots());
                 break;
@@ -151,9 +160,9 @@ public void MoveCurrentPlayer(int spaces)
             case 5: reward = "Mega Minion"; CurrentPlayerData.AddMinions(200); break;
             case 6: reward = "Extra Turn"; CurrentPlayerData.extraTurn = true; break;
         }
-
+        minionsUI.UpdateMinions(currentPlayerIndex, CurrentPlayerData.minions);
         StartCoroutine(ShowRiskMessages(roll, reward));
-    }
+        }
     private IEnumerator ShowRiskMessages(int roll, string reward)
         {
         turnUI.ShowMessage("Risk Square! Roll the dice!");
