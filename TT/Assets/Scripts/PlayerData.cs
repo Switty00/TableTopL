@@ -7,6 +7,7 @@ public class PlayerData : MonoBehaviour
     public bool extraTurn = false;
     public bool doubleNextRoll = false;
     public List<string> items = new List<string>();
+    public int playerIndex;
 
     public void AddItem(string item)
     {

@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
             if (active)
             {
                 var pd = players[i].GetComponentInChildren<PlayerData>();
+                pd.playerIndex = i;
                 minionsUI.UpdateMinions(i, pd.minions);
             }
         }
@@ -187,6 +188,7 @@ public class GameManager : MonoBehaviour
     }
     public void HandleTerritory(Territory territory)
     {
+        int buyerIndex = currentPlayerIndex;
         PlayerData player = CurrentPlayerData;
         if (!territory.IsOwned)
         {
@@ -197,7 +199,7 @@ public class GameManager : MonoBehaviour
                     if (player.SpendMinions(territory.cost))
                     {
                         territory.owner = player;
-                        minionsUI.UpdateMinions(currentPlayerIndex, player.minions);;
+                        minionsUI.UpdateMinions(buyerIndex, player.minions);
                         turnUI.ShowTimedMessage("You bought the territory!", 2f);
                     }
                     else
@@ -214,7 +216,6 @@ public class GameManager : MonoBehaviour
             return;
         }
         PlayerData owner = territory.owner;
-
         if (player.SpendMinions(territory.rent))
         {
             owner.AddMinions(territory.rent);
@@ -225,17 +226,7 @@ public class GameManager : MonoBehaviour
             turnUI.ShowTimedMessage("You cannot afford the rent!", 2f);
         }
         minionsUI.UpdateMinions(currentPlayerIndex, player.minions);
-        int ownerIndex = -1;
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[i].GetComponentInChildren<PlayerData>() == owner)
-            {
-                ownerIndex = i;
-                break;
-            }
-        }
-        if (ownerIndex >= 0)
-            minionsUI.UpdateMinions(ownerIndex, owner.minions);
+        minionsUI.UpdateMinions(owner.playerIndex, owner.minions);
     }
 
     public void CheckElimination(int index)
