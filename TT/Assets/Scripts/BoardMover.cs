@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class BoardMover : MonoBehaviour
 {
@@ -14,23 +15,23 @@ public class BoardMover : MonoBehaviour
     public System.Action onPassedCorner;
     public System.Action onLandedBanditSquare;
     public System.Action onLandedRiskSquare;
-    public int[] cornerIndexes = {0, 10, 20, 30 };
-    public int[] banditSquares = {15,35 };
-    public int[] riskSquares = { 5, 25 };
-
+    public System.Action<Territory> onLandedTerritory;
+    public int[] cornerIndexes = {0,10,20,30};
+    public int[] banditSquares = {15,35};
+    public int[] riskSquares = {5,25};
     void Update()
     {
         if (isMoving)
             MoveToNextSpace();
     }
-    public void MoveSpaces(int spaces)
+    public void MoveSpaces(int spaces, bool ignoreCurrentPlayer = false)
     {
-        if (!isCurrentPlayer || isMoving || boardSpaces.Count == 0)
+        if ((!isCurrentPlayer && !ignoreCurrentPlayer) || isMoving || boardSpaces.Count == 0)
             return;
-
         stepsRemaining = spaces;
         SetNextTarget();
     }
+
     private void SetNextTarget()
     {
         int previousIndex = currentIndex;
@@ -75,26 +76,15 @@ public class BoardMover : MonoBehaviour
             }
             else
             {
-                isMoving = false;
-                foreach (int bandit in banditSquares)
-                {
-                    if (currentIndex == bandit)
-                    {
-                        Debug.Log("Player landed on bandit square ");
-                        onLandedBanditSquare?.Invoke();
-                    }
-                }
-                isMoving = false;
-                foreach (int risk in riskSquares)
-                {
-                    if (currentIndex == risk)
-                    {
-                        Debug.Log("Player Landed on a risk square");
-                        onLandedRiskSquare?.Invoke();
-                    }
-                }
-                onMoveComplete?.Invoke();
-                
+            isMoving = false;
+            if (banditSquares.Contains(currentIndex))
+                onLandedBanditSquare?.Invoke();
+            if (riskSquares.Contains(currentIndex))
+                onLandedRiskSquare?.Invoke();
+                Territory territory = boardSpaces[currentIndex].GetComponentInChildren<Territory>();
+                if (territory != null)
+                onLandedTerritory?.Invoke(territory);
+             onMoveComplete?.Invoke();
             }
         }
     }
