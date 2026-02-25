@@ -14,21 +14,16 @@ public class TurnUI_TMP : MonoBehaviour
     public GameObject buyPanel;
     public Button buyButton;
     public Button cancelButton;
-
-
     void Start()
     {
         buyPanel.SetActive(false);
         messagePanel.SetActive(false);
         banditPanel.SetActive(false);
     }
-
-
     public void UpdateTurn(int playerIndex)
     {
         turnText.text = $"Player <b>{playerIndex + 1}</b>'s Turn";
     }
-
     public void ShowMessage(string message)
     {
         messageText.text = message;
@@ -60,7 +55,6 @@ public class TurnUI_TMP : MonoBehaviour
             buyPanel.SetActive(false);
             onBuy?.Invoke();
         });
-
         cancelButton.onClick.RemoveAllListeners();
         cancelButton.onClick.AddListener(() =>
         {
